@@ -53,29 +53,29 @@ namespace UTF8StreamReplacer.Specs
             var cases = new[]
             {
                 // varying buffer sizes
-                new { BufferSize = 5,  StartDelim = "{", EndDelim = "}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "123456{Hello}123456", Expected = "123456Daniel123456" },
-                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "123456{Hello}123456", Expected = "123456Daniel123456" },
-                new { BufferSize = 20, StartDelim = "{", EndDelim = "}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "123456{Hello}123456", Expected = "123456Daniel123456" },
+                new { BufferSize = 5,  StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456{Hello}123456", Expected = "123456Daniel123456" },
+                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456{Hello}123456", Expected = "123456Daniel123456" },
+                new { BufferSize = 20, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456{Hello}123456", Expected = "123456Daniel123456" },
 
                 // varying start delimiter
-                new { BufferSize = 10, StartDelim = "{{",  EndDelim = "}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "123456{{Hello}123456",  Expected = "123456Daniel123456" },
-                new { BufferSize = 10, StartDelim = "{{{", EndDelim = "}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "123456{{{Hello}123456", Expected = "123456Daniel123456" },
+                new { BufferSize = 10, StartDelim = "{{",  EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456{{Hello}123456",  Expected = "123456Daniel123456" },
+                new { BufferSize = 10, StartDelim = "{{{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456{{{Hello}123456", Expected = "123456Daniel123456" },
 
                 // varying end delimiter
-                new { BufferSize = 10, StartDelim = "{", EndDelim = "}}",  Replacer = (Replacer<string>)((str) => "Daniel"), Input = "123456{Hello}}123456",  Expected = "123456Daniel123456" },
-                new { BufferSize = 10, StartDelim = "{", EndDelim = "}}}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "123456{Hello}}}123456", Expected = "123456Daniel123456" },
+                new { BufferSize = 10, StartDelim = "{", EndDelim = "}}",  Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456{Hello}}123456",  Expected = "123456Daniel123456" },
+                new { BufferSize = 10, StartDelim = "{", EndDelim = "}}}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456{Hello}}}123456", Expected = "123456Daniel123456" },
 
                 // diff delimiter positions
-                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "{Hello}123456789", Expected = "Daniel123456789" },
-                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "123456789{Hello}", Expected = "123456789Daniel" },
+                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "{Hello}123456789", Expected = "Daniel123456789" },
+                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456789{Hello}", Expected = "123456789Daniel" },
 
                 // partial delimiter matches
-                new { BufferSize = 10, StartDelim = "{{", EndDelim = "}}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "1{123{{Hello}}123", Expected = "1{123Daniel123" },
-                new { BufferSize = 10, StartDelim = "{{", EndDelim = "}}", Replacer = (Replacer<string>)((str) => "Daniel"), Input = "1{{Hello}123}}123", Expected = "1Daniel123"     },
+                new { BufferSize = 10, StartDelim = "{{", EndDelim = "}}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "1{123{{Hello}}123", Expected = "1{123Daniel123" },
+                new { BufferSize = 10, StartDelim = "{{", EndDelim = "}}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "1{{Hello}123}}123", Expected = "1Daniel123"     },
 
                 // varying replacers
-                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (Replacer<string>)((str) => str == "Hello" ? "Ben" : ""),                          Input = "123456{Hello}123456",        Expected = "123456Ben123456"    },
-                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (Replacer<string>)((str) => str == "Hello" ? "Ben" : str == "World" ? "Bob" : ""), Input = "123456{Hello}123456{World}", Expected = "123456Ben123456Bob" },
+                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => str == "Hello" ? "Ben" : ""),                          Input = "123456{Hello}123456",        Expected = "123456Ben123456"    },
+                new { BufferSize = 10, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => str == "Hello" ? "Ben" : str == "World" ? "Bob" : ""), Input = "123456{Hello}123456{World}", Expected = "123456Ben123456Bob" },
             }
             .ToList();
 

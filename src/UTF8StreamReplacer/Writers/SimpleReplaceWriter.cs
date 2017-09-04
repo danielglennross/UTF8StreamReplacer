@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace UTF8StreamReplacer.Writers
 {
-    public class SimpleReplaceWriter : BaseWriter
+    internal class SimpleReplaceWriter : BaseWriter
     {
         private readonly byte[] _match;
         private readonly byte[] _replace;

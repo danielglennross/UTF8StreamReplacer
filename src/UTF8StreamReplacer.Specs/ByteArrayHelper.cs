@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace UTF8StreamReplacer.Specs
 {
-    public static class Helper
+    internal static class ByteArrayHelper
     {
-        public static IEnumerable<T[]> Split<T>(this T[] array, int size)
+        public static IEnumerable<byte[]> Split(this byte[] array, int size)
         {
             for (var i = 0; i < (float)array.Length / size; i++)
             {

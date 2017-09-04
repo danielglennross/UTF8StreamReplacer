@@ -1,14 +1,11 @@
 ﻿using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace UTF8StreamReplacer
 {
-    using StringReplacer = Replacer<string>;
-    using ByteReplacer = Replacer<byte[]>;
     using Writers;
 
-    public delegate T Replacer<T>(T input);
+    public delegate string StringReplacer(string input);
+    public delegate byte[] ByteArrayReplacer(byte[] input);
 
     public class UTf8StreamReplacer : Stream
     {
@@ -16,7 +13,7 @@ namespace UTF8StreamReplacer
         private IWriter _writer;
 
         public UTf8StreamReplacer(Stream stream, string match, string replace)
-            : this(stream, Encoding.UTF8.GetBytes(match), Encoding.UTF8.GetBytes(replace))
+            : this(stream, match.GetBytes(), replace.GetBytes())
         { }
 
         public UTf8StreamReplacer(Stream stream, byte[] match, byte[] replace)
@@ -29,31 +26,27 @@ namespace UTF8StreamReplacer
             : this(stream, replacer, delimiter, delimiter)
         { }
 
-        public UTf8StreamReplacer(Stream stream, ByteReplacer replacer, byte[] delimiter)
+        public UTf8StreamReplacer(Stream stream, ByteArrayReplacer replacer, byte[] delimiter)
             : this(stream, replacer, delimiter, delimiter)
         { }
 
         public UTf8StreamReplacer(Stream stream, StringReplacer replacer, string startDelimiter, string endDelimiter)
         {
-            ByteReplacer byteReplacer = input =>
+            ByteArrayReplacer byteArrayReplacer = input =>
             {
-                var potentialStr = Encoding.UTF8.GetString(input.ToArray());
-                var replacementStr = replacer(potentialStr);
-                var replacement = Encoding.UTF8.GetBytes(replacementStr);
-                return replacement;
+                var replacementStr = replacer(input.GetString());
+                return replacementStr.GetBytes();
             };
 
-            Initialize(
-                stream, byteReplacer, Encoding.UTF8.GetBytes(startDelimiter), Encoding.UTF8.GetBytes(endDelimiter)
-            );
+            Initialize(stream, byteArrayReplacer, startDelimiter.GetBytes(), endDelimiter.GetBytes());
         }
 
-        public UTf8StreamReplacer(Stream stream, ByteReplacer replacer, byte[] startDelimiter, byte[] endDelimiter)
+        public UTf8StreamReplacer(Stream stream, ByteArrayReplacer replacer, byte[] startDelimiter, byte[] endDelimiter)
         {
             Initialize(stream, replacer, startDelimiter, endDelimiter);
         }
 
-        private void Initialize(Stream stream, ByteReplacer replacer, byte[] startDelimiter, byte[] endDelimiter)
+        private void Initialize(Stream stream, ByteArrayReplacer replacer, byte[] startDelimiter, byte[] endDelimiter)
         {
             _stream = stream;
             _writer = new DelimitedReplaceWriter(stream, startDelimiter, endDelimiter, replacer);

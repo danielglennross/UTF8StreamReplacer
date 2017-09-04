@@ -5,18 +5,18 @@ using System.Linq;
 
 namespace UTF8StreamReplacer.Writers
 {
-    public class DelimitedReplaceWriter : BaseWriter
+    internal class DelimitedReplaceWriter : BaseWriter
     {
         private readonly byte[] _startDelimiter;
         private readonly byte[] _endDelimiter;
-        private readonly Replacer<byte[]> _byteReplacer;
+        private readonly ByteArrayReplacer _byteArrayReplacer;
 
-        public DelimitedReplaceWriter(Stream stream, byte[] startDelimiter, byte[] endDelimiter, Replacer<byte[]> byteReplacer)
+        public DelimitedReplaceWriter(Stream stream, byte[] startDelimiter, byte[] endDelimiter, ByteArrayReplacer byteArrayReplacer)
             : base(stream)
         {
             _startDelimiter = startDelimiter;
             _endDelimiter = endDelimiter;
-            _byteReplacer = byteReplacer;
+            _byteArrayReplacer = byteArrayReplacer;
         }
 
         public override void Write(IReadOnlyList<byte> buffer, int offset, int count)
@@ -52,7 +52,7 @@ namespace UTF8StreamReplacer.Writers
                         PotentialStream.RemoveRange(0, _startDelimiter.Length);
                         PotentialStream.RemoveRange(PotentialStream.Count - _endDelimiter.Length, _endDelimiter.Length);
 
-                        var replacement = _byteReplacer(PotentialStream.ToArray());
+                        var replacement = _byteArrayReplacer(PotentialStream.ToArray());
 
                         MemoryStream.AddRange(replacement);
                         PotentialStream.Clear();

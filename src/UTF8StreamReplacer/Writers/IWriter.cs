@@ -2,7 +2,7 @@
 
 namespace UTF8StreamReplacer.Writers
 {
-    public interface IWriter
+    internal interface IWriter
     {
         void Write(IReadOnlyList<byte> buffer, int offset, int count);
         void Flush();

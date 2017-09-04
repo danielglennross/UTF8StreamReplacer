@@ -3,7 +3,7 @@ using System.IO;
 
 namespace UTF8StreamReplacer.Writers
 {
-    public abstract class BaseWriter : IWriter
+    internal abstract class BaseWriter : IWriter
     {
         protected readonly Stream Stream;
         protected readonly List<byte> PotentialStream;
