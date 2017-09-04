@@ -15,7 +15,9 @@ Replace all occurances of a specific string / byte array when writing the stream
 var simpleStringReplace = new UTf8StreamReplacer(stream, "ReplaceThis", "WithThis");
 
 // byte[] api
-var simpleByteReplace = new UTf8StreamReplacer(stream, Encoding.UTF8.GetBytes("ReplaceThis"), Encoding.UTF8.GetBytes("WithThis"));
+var simpleByteReplace = new UTf8StreamReplacer(
+	stream, Encoding.UTF8.GetBytes("ReplaceThis"), Encoding.UTF8.GetBytes("WithThis")
+);
 ```
 
 Replace all occurances of a string / byte array that fall within a specific delimiter(s) when writing the steam:
@@ -53,17 +55,3 @@ var delimitedCommentStringReplace = new UTf8StreamReplacer(stream, (str) =>
     // return a new byte arr
 }, Encoding.UTF8.GetBytes("<!--"), Encoding.UTF8.GetBytes("-->"));
 ```
-
-            
-
-            
-
-            var delimitedByteReplace = new UTf8StreamReplacer(new MemoryStream(), (byteArr) =>
-            {
-                // return new byte array
-            }, Encoding.UTF8.GetBytes("##"));
-
-            var delimitedStringReplace = new UTf8StreamReplacer(new MemoryStream(), (byteArr) =>
-            {
-                // return new byte array
-            }, Encoding.UTF8.GetBytes("<!--"), Encoding.UTF8.GetBytes("-->"));

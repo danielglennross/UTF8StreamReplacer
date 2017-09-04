@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -44,7 +43,9 @@ namespace UTF8StreamReplacer
                 return replacement;
             };
 
-            Initialize(stream, byteReplacer, Encoding.UTF8.GetBytes(startDelimiter), Encoding.UTF8.GetBytes(endDelimiter));
+            Initialize(
+                stream, byteReplacer, Encoding.UTF8.GetBytes(startDelimiter), Encoding.UTF8.GetBytes(endDelimiter)
+            );
         }
 
         public UTf8StreamReplacer(Stream stream, ByteReplacer replacer, byte[] startDelimiter, byte[] endDelimiter)
