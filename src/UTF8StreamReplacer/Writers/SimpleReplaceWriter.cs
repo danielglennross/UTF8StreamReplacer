@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -17,42 +16,36 @@ namespace UTF8StreamReplacer.Writers
             _replace = replace;
         }
 
-        public override void Write(IReadOnlyList<byte> buffer, int offset, int count)
+        protected override void ProcessByte(byte current)
         {
-            Func<int, bool> isPotential = (currentBufferIndex) =>
+            Func<bool> isPotential = () =>
             {
-                return _match.Where((t, i) => PotentialStream.Count == i && t == buffer[currentBufferIndex]).Any();
+                return _match.Where((t, i) => PotentialStream.Count == i && t == current).Any();
             };
 
-            for (var i = offset; i < offset + count; i++)
+            // if we match part of seg
+            if (isPotential())
             {
-                // if we match part of seg
-                if (isPotential(i))
-                {
-                    PotentialStream.Add(buffer[i]);
-                    continue;
-                }
-
-                // save potential, or normal
-                if (PotentialStream.Any())
-                {
-                    if (PotentialStream.SequenceEqual(_match))
-                    {// if matched
-                        MemoryStream.AddRange(_replace);
-                    }
-                    else
-                    {// didnt match, add what we got
-                        MemoryStream.AddRange(PotentialStream);
-                    }
-
-                    PotentialStream.Clear();
-                }
-
-                MemoryStream.Add(buffer[i]);
+                PotentialStream.Add(current);
+                return;
             }
 
-            Stream.Write(MemoryStream.ToArray(), 0, MemoryStream.Count);
-            MemoryStream.Clear();
+            // save potential, or normal
+            if (PotentialStream.Any())
+            {
+                if (PotentialStream.SequenceEqual(_match))
+                {// if matched
+                    MemoryStream.AddRange(_replace);
+                }
+                else
+                {// didnt match, add what we got
+                    MemoryStream.AddRange(PotentialStream);
+                }
+
+                PotentialStream.Clear();
+            }
+
+            MemoryStream.Add(current);            
         }
 
         public override void Flush()
@@ -70,7 +63,7 @@ namespace UTF8StreamReplacer.Writers
                     Stream.Write(PotentialStream.ToArray(), 0, PotentialStream.Count);
                 }         
             }
-            Stream.Flush();
+            base.Flush();
         }
     }
 }

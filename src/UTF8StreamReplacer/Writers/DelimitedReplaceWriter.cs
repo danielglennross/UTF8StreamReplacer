@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -19,14 +18,14 @@ namespace UTF8StreamReplacer.Writers
             _byteArrayReplacer = byteArrayReplacer;
         }
 
-        public override void Write(IReadOnlyList<byte> buffer, int offset, int count)
+        protected override void ProcessByte(byte current)
         {
-            Func<int, bool> isPotential = (currentBufferIndex) =>
+            Func<bool> isPotential = () =>
             {
-                return _startDelimiter.Where((t, i) => PotentialStream.Count == i && t == buffer[currentBufferIndex]).Any();
+                return _startDelimiter.Where((t, i) => PotentialStream.Count == i && t == current).Any();
             };
 
-            Func<int, bool> isClosed = (currentBufferIndex) =>
+            Func<bool> isClosed = () =>
             {
                 if (PotentialStream.Count < _endDelimiter.Length)
                 {
@@ -38,47 +37,41 @@ namespace UTF8StreamReplacer.Writers
 
                 return !_endDelimiter.Where((t, i) => _endDelimiter[eCount - i] != PotentialStream[pCount - i]).Any();
             };
-
-            for (var i = offset; i < offset + count; i++)
+  
+            // if in segment
+            if (PotentialStream.Count >= _startDelimiter.Length)
             {
-                // if in segment
-                if (PotentialStream.Count >= _startDelimiter.Length)
+                PotentialStream.Add(current);
+                if (isClosed())
                 {
-                    PotentialStream.Add(buffer[i]);
-                    if (isClosed(i))
-                    {
-                        // end segment
-                        // remove delimiters
-                        PotentialStream.RemoveRange(0, _startDelimiter.Length);
-                        PotentialStream.RemoveRange(PotentialStream.Count - _endDelimiter.Length, _endDelimiter.Length);
+                    // end segment
+                    // remove delimiters
+                    PotentialStream.RemoveRange(0, _startDelimiter.Length);
+                    PotentialStream.RemoveRange(PotentialStream.Count - _endDelimiter.Length, _endDelimiter.Length);
 
-                        var replacement = _byteArrayReplacer(PotentialStream.ToArray());
+                    var replacement = _byteArrayReplacer(PotentialStream.ToArray());
 
-                        MemoryStream.AddRange(replacement);
-                        PotentialStream.Clear();
-                    }
-                    continue;
-                }
-
-                // if we match part of seg
-                if (isPotential(i))
-                {
-                    PotentialStream.Add(buffer[i]);
-                    continue;
-                }
-
-                // cancel potential if exists
-                if (PotentialStream.Any())
-                {
-                    MemoryStream.AddRange(PotentialStream);
+                    MemoryStream.AddRange(replacement);
                     PotentialStream.Clear();
                 }
-
-                MemoryStream.Add(buffer[i]);
+                return;
             }
 
-            Stream.Write(MemoryStream.ToArray(), 0, MemoryStream.Count);
-            MemoryStream.Clear();
+            // if we match part of seg
+            if (isPotential())
+            {
+                PotentialStream.Add(current);
+                return;
+            }
+
+            // cancel potential if exists
+            if (PotentialStream.Any())
+            {
+                MemoryStream.AddRange(PotentialStream);
+                PotentialStream.Clear();
+            }
+
+            MemoryStream.Add(current);
         }
 
         public override void Flush()
@@ -88,7 +81,7 @@ namespace UTF8StreamReplacer.Writers
             {
                 Stream.Write(PotentialStream.ToArray(), 0, PotentialStream.Count);   
             }
-            Stream.Flush();
+            base.Flush();
         }
     }
 }
