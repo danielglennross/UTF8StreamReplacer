@@ -54,10 +54,10 @@ namespace UTF8StreamReplacer
         public override void Write(byte[] buffer, int offset, int count) => _writer.Write(buffer, offset, count);
 
         private static readonly Func<StringReplacer, ByteArrayReplacer> StringToByteArrayReplacer =
-            (replacer) => 
+            (strReplacer) => 
                 (input) =>
                 {
-                    var replacementStr = replacer(input.GetString());
+                    var replacementStr = strReplacer(input.GetString());
                     return replacementStr.GetBytes();
                 };
     }

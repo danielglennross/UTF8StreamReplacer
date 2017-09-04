@@ -17,6 +17,21 @@ namespace UTF8StreamReplacer.Writers
             MemoryStream = new List<byte>();
         }
 
+        /// <summary>
+        /// Each byte is considered in turn.
+        /// If a byte is not part of a match, add it to MemoryStream.
+        /// If a byte is part of a match, add it to PotentialStream.
+        /// 
+        /// If a match is complete (PotentialStream fulfilled), perform any replace logic on PotentialStream & write it to MemoryStream.
+        /// If a match is aborted, write the contents of PotentialStream to MemoryStream.
+        /// Clear PotentialStream after use.
+        /// 
+        /// PotentialStream is used to record potential matches across buffer boundaries
+        /// (i.e. the match may start at the end of one buffer and flow into the next)
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
         public void Write(IReadOnlyList<byte> buffer, int offset, int count)
         {
             var length = offset + count;
