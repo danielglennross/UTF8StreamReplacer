@@ -9,6 +9,60 @@ namespace UTF8StreamReplacer.Specs
     public class UTf8StreamReplacerTests
     {
         [TestMethod]
+        public void UTf8StreamReplacer_SimpleReplaceTest_Offset()
+        {
+            var cases = new[]
+            {
+                new { Offset = 0, Count = 23, Match = "Hello", Replace = "Daniel", Input = "123456789Hello123456789", Expected = "123456789Daniel123456789" },
+                new { Offset = 0, Count = 12, Match = "Hello", Replace = "Daniel", Input = "123456789Hello123456789", Expected = "123456789Hel" },
+                new { Offset = 5, Count = 12, Match = "Hello", Replace = "Daniel", Input = "123456789Hello123456789", Expected = "6789Daniel123" },
+                new { Offset = 8, Count = 6,  Match = "Hello", Replace = "Daniel", Input = "123456789Hello123456789", Expected = "9Daniel" },
+            }
+            .ToList();
+
+            cases.ForEach(val =>
+            {
+                var bytes = Encoding.UTF8.GetBytes(val.Input);
+                var memoryStream = new MemoryStream();
+                var testStream = new UTf8StreamReplacer(memoryStream, val.Match, val.Replace);
+   
+                testStream.Write(bytes, val.Offset, val.Count);
+                testStream.Flush();
+
+                var result = Encoding.UTF8.GetString(memoryStream.ToArray());
+
+                Assert.AreEqual(val.Expected, result);
+            });
+        }
+
+        [TestMethod]
+        public void UTf8StreamReplacer_DelimitedReplaceTest_Offset()
+        {
+            var cases = new[]
+            {
+                new { Offset = 0, Count = 25, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456789{Hello}123456789", Expected = "123456789Daniel123456789" },
+                new { Offset = 0, Count = 12, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456789{Hello}123456789", Expected = "123456789{He" },
+                new { Offset = 5, Count = 12, StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456789{Hello}123456789", Expected = "6789Daniel1" },
+                new { Offset = 8, Count = 8,  StartDelim = "{", EndDelim = "}", Replacer = (StringReplacer)((str) => "Daniel"), Input = "123456789{Hello}123456789", Expected = "9Daniel" },
+            }
+            .ToList();
+
+            cases.ForEach(val =>
+            {
+                var bytes = Encoding.UTF8.GetBytes(val.Input);
+                var memoryStream = new MemoryStream();
+                var testStream = new UTf8StreamReplacer(memoryStream, val.Replacer, val.StartDelim, val.EndDelim);
+
+                testStream.Write(bytes, val.Offset, val.Count);
+                testStream.Flush();
+
+                var result = Encoding.UTF8.GetString(memoryStream.ToArray());
+
+                Assert.AreEqual(val.Expected, result);
+            });
+        }
+
+        [TestMethod]
         public void UTf8StreamReplacer_SimpleReplaceTest()
         {
             var cases = new[]
