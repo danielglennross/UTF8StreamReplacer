@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace UTF8StreamReplacer.Writers
 {
@@ -52,9 +53,35 @@ namespace UTF8StreamReplacer.Writers
 
         public virtual void Flush()
         {
-            Stream.Flush();   
+            if (PotentialStream.Any())
+            {
+                Stream.Write(PotentialStream.ToArray(), 0, PotentialStream.Count);
+            }
         }
 
         protected abstract void ProcessByte(byte current);
+
+        protected bool IsAccumulativeMatch(byte[] input, byte current)
+        {
+            // get our latest PotentialStream count - use this to get the corresponding input byte
+            // if this input byte matches our current one, we're still accumulating
+            return input.Where((b, i) => PotentialStream.Count == i && b == current).Any();
+        }
+
+        protected bool IsAccumulativeMatchComplete(byte[] input, byte current)
+        {
+            // we're still accumulating if PotentialStream isn't long enough to match
+            if (PotentialStream.Count < input.Length)
+            {
+                return false;
+            }
+
+            var eCount = input.Length - 1;
+            var pCount = PotentialStream.Count - 1;
+
+            // trace backwards down our input - if we arrive at a byte that doesn't match 
+            // the corresponding PotentialStream byte we're still accumulating
+            return !input.Where((_, i) => input[eCount - i] != PotentialStream[pCount - i]).Any();
+        }
     }
 }

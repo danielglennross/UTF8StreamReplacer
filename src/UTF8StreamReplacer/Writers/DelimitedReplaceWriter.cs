@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 
 namespace UTF8StreamReplacer.Writers
@@ -19,30 +18,12 @@ namespace UTF8StreamReplacer.Writers
         }
 
         protected override void ProcessByte(byte current)
-        {
-            Func<bool> isPotential = () =>
-            {
-                return _startDelimiter.Where((t, i) => PotentialStream.Count == i && t == current).Any();
-            };
-
-            Func<bool> isClosed = () =>
-            {
-                if (PotentialStream.Count < _endDelimiter.Length)
-                {
-                    return false;
-                }
-
-                var eCount = _endDelimiter.Length - 1;
-                var pCount = PotentialStream.Count - 1;
-
-                return !_endDelimiter.Where((t, i) => _endDelimiter[eCount - i] != PotentialStream[pCount - i]).Any();
-            };
-  
+        {  
             // if in segment
             if (PotentialStream.Count >= _startDelimiter.Length)
             {
                 PotentialStream.Add(current);
-                if (isClosed())
+                if (IsAccumulativeMatchComplete(_endDelimiter, current))
                 {
                     // end segment
                     // remove delimiters
@@ -58,7 +39,7 @@ namespace UTF8StreamReplacer.Writers
             }
 
             // if we match part of seg
-            if (isPotential())
+            if (IsAccumulativeMatch(_startDelimiter, current))
             {
                 PotentialStream.Add(current);
                 return;
@@ -72,16 +53,6 @@ namespace UTF8StreamReplacer.Writers
             }
 
             MemoryStream.Add(current);
-        }
-
-        public override void Flush()
-        {
-            // do we have waiting ponential stream at end
-            if (PotentialStream.Any())
-            {
-                Stream.Write(PotentialStream.ToArray(), 0, PotentialStream.Count);   
-            }
-            base.Flush();
         }
     }
 }
