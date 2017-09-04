@@ -43,8 +43,8 @@ namespace StreamMatcher
             var memoryStream = new MemoryStream();
             var testStream = new UTf8StreamReplacer(memoryStream, (str) =>
             {
-                if (str == "%%{testing}}") return "HelloWorld";
-                if (str == "%%{gfhj}}") return "Hello";
+                if (str == "testing") return "HelloWorld";
+                if (str == "gfhj") return "Hello";
                 return null;
             }, "%%{", "}}");
 

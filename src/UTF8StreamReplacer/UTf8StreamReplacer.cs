@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace StreamMatcher
+namespace UTF8StreamReplacer
 {
     using StringReplacer = Replacer<string>;
     using ByteReplacer = Replacer<byte[]>;
@@ -14,7 +14,6 @@ namespace StreamMatcher
     public class UTf8StreamReplacer : Stream
     {
         private Stream _stream;
-        private List<byte> _potentialStream;
         private IWriter _writer;
 
         public UTf8StreamReplacer(Stream stream, string match, string replace)
@@ -24,8 +23,7 @@ namespace StreamMatcher
         public UTf8StreamReplacer(Stream stream, byte[] match, byte[] replace)
         {
             _stream = stream;
-            _potentialStream = new List<byte>();
-            _writer = new SimpleReplaceWriter(stream, _potentialStream, match, replace);
+            _writer = new SimpleReplaceWriter(stream, match, replace);
         }
 
         public UTf8StreamReplacer(Stream stream, StringReplacer replacer, string delimiter)
@@ -57,8 +55,7 @@ namespace StreamMatcher
         private void Initialize(Stream stream, ByteReplacer replacer, byte[] startDelimiter, byte[] endDelimiter)
         {
             _stream = stream;
-            _potentialStream = new List<byte>();
-            _writer = new DelimitedReplaceWriter(stream, _potentialStream, startDelimiter, endDelimiter, replacer);
+            _writer = new DelimitedReplaceWriter(stream, startDelimiter, endDelimiter, replacer);
         }
 
         public override bool CanRead => true;
@@ -69,14 +66,7 @@ namespace StreamMatcher
         public override long Seek(long offset, SeekOrigin direction) => _stream.Seek(offset, direction);
         public override void SetLength(long length) => _stream.SetLength(length);
         public override void Close() => _stream.Close();
-        public override void Flush()
-        {
-            if (_potentialStream.Any())
-            {
-                _stream.Write(_potentialStream.ToArray(), 0, _potentialStream.Count);
-            }
-            _stream.Flush();
-        }
+        public override void Flush() => _writer.Flush();
         public override int Read(byte[] buffer, int offset, int count) => _stream.Read(buffer, offset, count);
         public override void Write(byte[] buffer, int offset, int count) => _writer.Write(buffer, offset, count);
     }
