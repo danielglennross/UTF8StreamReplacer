@@ -40,13 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EncodingHelper.cs" />
+    <Compile Include="lib\EncodingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UTf8StreamReplacer.cs" />
-    <Compile Include="Writers\BaseWriter.cs" />
-    <Compile Include="Writers\DelimitedReplaceWriter.cs" />
-    <Compile Include="Writers\IWriter.cs" />
-    <Compile Include="Writers\SimpleReplaceWriter.cs" />
+    <Compile Include="lib\UTf8StreamReplacer.cs" />
+    <Compile Include="lib\Writers\BaseWriter.cs" />
+    <Compile Include="lib\Writers\DelimitedReplaceWriter.cs" />
+    <Compile Include="lib\Writers\IWriter.cs" />
+    <Compile Include="lib\Writers\SimpleReplaceWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

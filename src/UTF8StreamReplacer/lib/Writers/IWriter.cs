@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace UTF8StreamReplacer.Writers
+namespace UTF8StreamReplacer.lib.Writers
 {
     internal interface IWriter
     {

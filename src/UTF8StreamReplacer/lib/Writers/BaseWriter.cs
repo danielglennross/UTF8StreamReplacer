@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace UTF8StreamReplacer.Writers
+namespace UTF8StreamReplacer.lib.Writers
 {
     internal abstract class BaseWriter : IWriter
     {

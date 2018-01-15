@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace UTF8StreamReplacer.Writers
+namespace UTF8StreamReplacer.lib.Writers
 {
     internal class DelimitedReplaceWriter : BaseWriter
     {

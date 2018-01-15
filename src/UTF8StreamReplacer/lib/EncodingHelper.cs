@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace UTF8StreamReplacer
+namespace UTF8StreamReplacer.lib
 {
     internal static class EncodingHelper
     {

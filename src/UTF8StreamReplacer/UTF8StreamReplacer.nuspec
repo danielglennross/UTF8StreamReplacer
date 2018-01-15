@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>UTF8StreamReplacer</title>
+    <authors>danielglennross</authors>
+    <owners>danielglennross</owners>
+    <projectUrl>https://github.com/danielglennross/UTF8StreamReplacer</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Replace bytes in a UTF8 byte stream.</description>
+    <releaseNotes>First release.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>UTF8 byte stream replace</tags>
+  </metadata>
+</package>

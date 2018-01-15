@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace UTF8StreamReplacer
+namespace UTF8StreamReplacer.lib
 {
     using Writers;
 

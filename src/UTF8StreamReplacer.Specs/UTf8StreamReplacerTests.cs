@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UTF8StreamReplacer.lib;
 
 namespace UTF8StreamReplacer.Specs
 {
